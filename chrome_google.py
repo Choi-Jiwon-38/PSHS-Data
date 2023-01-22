@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
+import urllib.request
 
 driver = webdriver.Chrome() # Chrome Driver를 불러온 뒤, driver
 driver.get('https://www.google.co.kr/imghp?hl=ko&authuser=0&ogbl')  # Move to 'google image'
@@ -21,7 +22,7 @@ while (1):
     new_height = driver.execute_script("return document.body.scrollHeight")
     if new_height == last_height:   
         try:            
-            driver.find_element(By.CLASS_NAME, 'mye4qd').send_keys(Keys.ENTER)
+            driver.find_element(By.CLASS_NAME, 'mye4qd').click()
         except:                 # If end of page (No view more button)
             break   
     last_height = new_height    # Update last height for loop
@@ -30,10 +31,13 @@ images = driver.find_elements(By.CLASS_NAME, 'rg_i Q4LuWd')
 count = 1
 for image in images:
     try:
-        image.send_keys(Keys.ENTER)
+        image.click()
         time.sleep(2)
-        imageURL = driver.find_element(By.XPATH, '')
-        # ADD MORE CODE . . .
+        imageURL = driver.find_element(By.XPATH, '/html/body/div[2]/c-wiz/div[3]/div[2]/div[3]/div/div/div[3]/div[2]/c-wiz/div[1]/div[1]/div/div[2]/a/img').get_attribute("src")
+        opener = urllib.request.build_opener()
+        opener.add_handler=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+        urllib.request.install_opener(opener)
+        urllib.request.urlretrieve(imageURL, str(count) + ".jpg")
         count = count + 1
     except:
         pass
